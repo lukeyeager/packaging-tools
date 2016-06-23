@@ -22,9 +22,6 @@ RUN git clone $GIT_URL package && \
     git archive $GIT_SRC -o ../${PACKAGE_NAME}_${PACKAGE_VERSION}.orig.tar.gz && \
     git -c user.name="nobody" -c user.email="no@email" merge $GIT_SRC && \
     echo y | mk-build-deps -i -r debian/control && \
-    debuild -S -uc -us
-
-VOLUME /result
-RUN useradd --non-unique --uid $USER_ID user && chown user: /result
-USER user
-CMD cp -v * /result/ || true
+    debuild -S -uc -us -sa && \
+    mkdir -p /install/$PACKAGE_NAME && \
+    cp ../* /install/$PACKAGE_NAME/ || true

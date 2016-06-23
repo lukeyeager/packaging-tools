@@ -10,7 +10,7 @@ ifndef GIT_DEB
 	$(error GIT_DEB unset)
 endif
 
-BUILD_DIR := $(shell pwd)/build
+LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 build:
 	docker build -t debian-build:base -f Dockerfile.base .
@@ -20,6 +20,7 @@ build:
 		--build-arg GIT_SRC=$(GIT_SRC) \
 		--build-arg GIT_DEB=$(GIT_DEB) \
 		-f Dockerfile.build .
-	mkdir -p $(BUILD_DIR)
-	docker run --rm -v $(BUILD_DIR):/result debian-build:build
+	docker create --name=debian-build debian-build:build
+	docker cp debian-build:/install $(LOCAL_DIR)
+	docker rm debian-build
 	docker rmi debian-build:build
