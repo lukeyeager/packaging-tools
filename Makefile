@@ -21,6 +21,8 @@ build:
 		--build-arg GIT_DEB=$(GIT_DEB) \
 		.
 	docker create --name=$(DOCKER_NAME) $(DOCKER_NAME):build
-	docker cp $(DOCKER_NAME):/install $(LOCAL_DIR)
-	docker rm $(DOCKER_NAME)
-	docker rmi $(DOCKER_NAME):build
+	-docker cp $(DOCKER_NAME):/install $(LOCAL_DIR)
+	-docker rm $(DOCKER_NAME)
+
+clean:
+	docker images -q $(DOCKER_NAME) | xargs docker rmi
