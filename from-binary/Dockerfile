@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends --force-yes \
 
 
 ARG OLD_PACKAGE
-ARG NEW_VERSION=""
+ARG NEW_VERSION
+ARG DEBEMAIL
+ARG DEBFULLNAME
 
 ENV BUILD_DIR /build
 WORKDIR $BUILD_DIR
@@ -33,6 +35,8 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         mv usr/share/doc/$PKG_NAME/copyright debian/ && \
         mv usr/share/doc/$PKG_NAME/changelog* debian/changelog.gz && \
         gunzip debian/changelog.gz && \
+        dch -v $NEW_VERSION "PPA Build" && \
+        dch -r "" && \
         mv usr/share/lintian/overrides/$PKG_NAME debian/lintian-overrides || true && \
         mv ../debian-rules debian/rules && \
         rm debian/control && \
@@ -49,6 +53,6 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         echo "Description: $PKG_DESC" >> debian/control && \
         echo "9" >> debian/compat && \
         tar czvf ../${PKG_NAME}_${SOURCE_VERSION}.orig.tar.gz --exclude debian . && \
-        debuild -uc -us && \
+        debuild -S -uc -us -sa && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
