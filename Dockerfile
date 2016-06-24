@@ -26,6 +26,7 @@ RUN git clone $GIT_URL package && \
         git archive $GIT_SRC -o ../${PKG_NAME}_${PKG_VERSION}.orig.tar.gz && \
         git -c user.name="nobody" -c user.email="no@email" merge $GIT_SRC && \
         echo y | mk-build-deps -i -r debian/control && \
+        rm -rf .git && \
         debuild -S -uc -us -sa && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
