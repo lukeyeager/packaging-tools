@@ -1,4 +1,4 @@
-.PHONY : build
+.PHONY : build clean
 
 ifndef OLD_PACKAGE
 	$(error OLD_PACKAGE unset)

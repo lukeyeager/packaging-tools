@@ -1,4 +1,4 @@
-.PHONY : build
+.PHONY : build clean
 
 ifndef GIT_URL
 	$(error GIT_URL unset)
