@@ -1,4 +1,4 @@
-.PHONY : all build
+.PHONY : build
 
 ifndef GIT_URL
 	$(error GIT_URL unset)
@@ -16,7 +16,6 @@ DOCKER_NAME := "debian-build"
 build:
 	docker build -t $(DOCKER_NAME):base -f Dockerfile.base .
 	docker build -t $(DOCKER_NAME):build \
-		--build-arg USER_ID=$(shell id -u) \
 		--build-arg GIT_URL=$(GIT_URL) \
 		--build-arg GIT_SRC=$(GIT_SRC) \
 		--build-arg GIT_DEB=$(GIT_DEB) \

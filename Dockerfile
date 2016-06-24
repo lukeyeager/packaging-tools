@@ -2,7 +2,6 @@ FROM debian-build:base
 
 RUN apt-get update
 
-ARG USER_ID
 ARG GIT_URL
 ARG GIT_SRC
 ARG GIT_DEB
