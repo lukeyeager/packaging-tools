@@ -14,7 +14,6 @@ LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_NAME := "debian-build"
 
 build:
-	docker build -t $(DOCKER_NAME):base -f Dockerfile.base .
 	docker build -t $(DOCKER_NAME):build \
 		--build-arg GIT_URL=$(GIT_URL) \
 		--build-arg GIT_SRC=$(GIT_SRC) \

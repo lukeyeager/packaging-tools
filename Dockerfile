@@ -1,6 +1,11 @@
-FROM debian-build:base
+FROM ubuntu:14.04
 
-RUN apt-get update
+RUN apt-get update && apt-get install -y --no-install-recommends --force-yes \
+        build-essential \
+        ca-certificates \
+        devscripts \
+        equivs \
+        git
 
 ARG GIT_URL
 ARG GIT_SRC
