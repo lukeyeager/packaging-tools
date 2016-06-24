@@ -44,6 +44,7 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         echo "Maintainer: $PKG_MAINTAINER" >> debian/control && \
         echo "Section: $PKG_SECTION" >> debian/control && \
         echo "Priority: $PKG_PRIORITY" >> debian/control && \
+        echo "Build-Depends: debhelper (>= 9)" >> debian/control && \
         echo "Standards-Version: 3.9.8" >> debian/control && \
         echo "" >> debian/control && \
         echo "Package: $PKG_NAME" >> debian/control && \
