@@ -53,6 +53,7 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         echo "Priority: $PKG_PRIORITY" >> debian/control && \
         echo "Description: $PKG_DESC" >> debian/control && \
         echo "9" >> debian/compat && \
+        find . -type d -empty -delete && \
         tar czvf ../${PKG_NAME}_${SOURCE_VERSION}.orig.tar.gz --exclude debian . && \
         debuild -S -uc -us -sa && \
         mkdir -p /install/$PKG_NAME && \
