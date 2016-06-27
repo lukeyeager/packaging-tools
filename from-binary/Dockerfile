@@ -45,12 +45,13 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         echo "Section: $PKG_SECTION" >> debian/control && \
         echo "Priority: $PKG_PRIORITY" >> debian/control && \
         echo "Build-Depends: debhelper (>= 9)" >> debian/control && \
-        echo "Standards-Version: 3.9.8" >> debian/control && \
+        echo "Standards-Version: 3.9.5" >> debian/control && \
         echo "" >> debian/control && \
         echo "Package: $PKG_NAME" >> debian/control && \
         echo "Architecture: $PKG_ARCH" >> debian/control && \
         echo "Section: $PKG_SECTION" >> debian/control && \
         echo "Priority: $PKG_PRIORITY" >> debian/control && \
+        echo "Depends: \${misc:Depends}" >> debian/control && \
         echo "Description: $PKG_DESC" >> debian/control && \
         echo "9" >> debian/compat && \
         find . -type d -empty -delete && \
