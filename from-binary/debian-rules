@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@
+	NO_PKG_MANGLE=1 dh $@
 
 override_dh_auto_build:
 	:
