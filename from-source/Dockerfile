@@ -18,8 +18,8 @@ WORKDIR /build
 RUN git clone $GIT_URL package && \
         cd package && \
         git checkout $GIT_DEB && \
-        export PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
-        export PKG_VERSION=`dpkg-parsechangelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
+        PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
+        PKG_VERSION=`dpkg-parsechangelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
         cd .. && \
         mv package $PKG_NAME && \
         cd $PKG_NAME && \
