@@ -9,6 +9,7 @@ LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_NAME := "debian-build-from-binary"
 
 build:
+	echo `date '+%s'` >> .build-log.txt
 	docker build -t $(DOCKER_NAME) \
 		--build-arg OLD_PACKAGE=$(OLD_PACKAGE) \
 		--build-arg NEW_VERSION="$(NEW_VERSION)" \

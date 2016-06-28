@@ -15,6 +15,8 @@ ARG GIT_DEB
 RUN mkdir -p /build
 WORKDIR /build
 
+ADD .build-log.txt /tmp/build-log
+
 # All in one command because we need dynamic envvars
 RUN git clone $GIT_URL package && \
         cd package && \

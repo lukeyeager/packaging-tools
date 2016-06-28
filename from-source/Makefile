@@ -14,6 +14,7 @@ LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_ID := "debian-build-from-source"
 
 build:
+	echo `date '+%s'` >> .build-log.txt
 	docker build -t $(DOCKER_ID) \
 		--build-arg GIT_URL=$(GIT_URL) \
 		--build-arg GIT_SRC=$(GIT_SRC) \

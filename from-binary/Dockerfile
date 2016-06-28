@@ -17,6 +17,7 @@ WORKDIR $BUILD_DIR
 
 ADD $OLD_PACKAGE orig.deb
 ADD debian-rules debian-rules
+ADD .build-log.txt /tmp/build-log
 
 # All in one command because we need dynamic envvars
 RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
