@@ -5,8 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --force-yes \
         debhelper \
         devscripts \
         fakeroot \
-        && rm -rf /var/lib/apt/lists/*
-
+        lintian
 
 ARG OLD_PACKAGE
 ARG NEW_VERSION
@@ -37,7 +36,10 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         gunzip debian/changelog.gz && \
         dch -v $NEW_VERSION "PPA Build" && \
         dch -r "" && \
-        mv usr/share/lintian/overrides/$PKG_NAME debian/lintian-overrides || true && \
+        mkdir debian/source/ && \
+        echo "maintainer-script-lacks-debhelper-token" >> debian/source/lintian-overrides && \
+        cat usr/share/lintian/overrides/$PKG_NAME | cut -d: -f2- > debian/${PKG_NAME}.lintian-overrides && \
+        rm usr/share/lintian/overrides/$PKG_NAME || true && \
         mv ../debian-rules debian/rules && \
         rm debian/control && \
         echo "Source: $PKG_NAME" >> debian/control && \
@@ -56,6 +58,10 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         echo "9" >> debian/compat && \
         find . -type d -empty -delete && \
         tar czvf ../${PKG_NAME}_${SOURCE_VERSION}.orig.tar.gz --exclude debian . && \
-        debuild -S -uc -us -sa && \
+        debuild --no-lintian -uc -us -b && \
+        lintian ../*.deb | head -n -1 | awk '{ print $3 }' | sort | uniq >> debian/${PKG_NAME}.lintian-overrides && \
+        debuild --no-lintian -uc -us -b && \
+        debuild --no-lintian -uc -us -S -sa && \
+        lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
