@@ -5,7 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends --force-yes \
         ca-certificates \
         devscripts \
         equivs \
-        git
+        git \
+        lintian
 
 ARG GIT_URL
 ARG GIT_SRC
@@ -27,6 +28,8 @@ RUN git clone $GIT_URL package && \
         git -c user.name="nobody" -c user.email="no@email" merge $GIT_SRC && \
         echo y | mk-build-deps -i -r debian/control && \
         rm -rf .git && \
-        debuild -S -uc -us -sa && \
+        debuild --no-lintian -uc -us -b && \
+        debuild --no-lintian -uc -us -S -sa && \
+        lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
