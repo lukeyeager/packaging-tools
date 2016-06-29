@@ -1,24 +1,28 @@
-.PHONY : build clean
-
-ifndef OLD_PACKAGE
-	$(error OLD_PACKAGE unset)
-endif
-NEW_VERSION ?= ""
+.PHONY : none build clean invalidate-cache
 
 LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-DOCKER_NAME := "debian-build-from-binary"
+DOCKER_ID := "debian-build-from-binary"
+
+none:
+	@:
 
 build:
-	echo `date '+%s'` >> .build-log.txt
-	docker build -t $(DOCKER_NAME) \
+	[ -e ".invalidate-cache" ] || touch .invalidate-cache
+	docker build -t $(DOCKER_ID) \
 		--build-arg OLD_PACKAGE=$(OLD_PACKAGE) \
 		--build-arg NEW_VERSION="$(NEW_VERSION)" \
 		--build-arg DEBFULLNAME="`git config --get user.name`" \
 		--build-arg DEBEMAIL="`git config --get user.email`" \
 		.
-	docker create --name=$(DOCKER_NAME) $(DOCKER_NAME)
-	-docker cp $(DOCKER_NAME):/install $(LOCAL_DIR)
-	-docker rm $(DOCKER_NAME)
+	docker create --name=$(DOCKER_ID) $(DOCKER_ID)
+	-docker cp $(DOCKER_ID):/install $(LOCAL_DIR)
+	-docker rm $(DOCKER_ID)
 
 clean:
-	docker images -q $(DOCKER_NAME) | xargs docker rmi
+	-docker rm $(DOCKER_ID)
+	docker images -q $(DOCKER_ID) | xargs -r docker rmi
+	-docker images --filter "dangling=true" -q | xargs -r docker rmi
+	rm -f .invalidate-cache
+
+invalidate-cache:
+	echo `date '+%s'` >> .invalidate-cache

@@ -8,17 +8,17 @@ RUN apt-get install -y --no-install-recommends --force-yes \
         fakeroot \
         lintian
 
+RUN mkdir /build
+WORKDIR /build
+
 ARG OLD_PACKAGE
 ARG NEW_VERSION
 ARG DEBEMAIL
 ARG DEBFULLNAME
 
-ENV BUILD_DIR /build
-WORKDIR $BUILD_DIR
-
 ADD $OLD_PACKAGE orig.deb
 ADD debian-rules debian-rules
-ADD .build-log.txt /tmp/build-log
+ADD .invalidate-cache .invalidate-cache
 
 # All in one command because we need dynamic envvars
 RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
