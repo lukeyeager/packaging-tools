@@ -9,30 +9,27 @@ RUN apt-get install -y --no-install-recommends --force-yes \
         git \
         lintian
 
+RUN mkdir /build
+WORKDIR /build
+
 ARG GIT_URL
 ARG GIT_SRC
 ARG GIT_DEB
+ADD .invalidate-cache .invalidate-cache
 
-RUN mkdir -p /build
-WORKDIR /build
-
-ADD .build-log.txt /tmp/build-log
+RUN git clone $GIT_URL package
+RUN cd package && git checkout $GIT_SRC && \
+        git -c user.name="nobody" -c user.email="no@email" merge $GIT_DEB
+RUN echo y | mk-build-deps -i -r package/debian/control
 
 # All in one command because we need dynamic envvars
-RUN git clone $GIT_URL package && \
-        cd package && \
-        git checkout $GIT_DEB && \
-        PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
-        PKG_VERSION=`dpkg-parsechangelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
-        cd .. && \
+RUN PKG_NAME=`dpkg-parsechangelog -lpackage/debian/changelog --show-field Source` && \
+        PKG_VERSION=`dpkg-parsechangelog -lpackage/debian/changelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
         mv package $PKG_NAME && \
         cd $PKG_NAME && \
         git archive $GIT_SRC -o ../${PKG_NAME}_${PKG_VERSION}.orig.tar.gz && \
-        git -c user.name="nobody" -c user.email="no@email" merge $GIT_SRC && \
-        echo y | mk-build-deps -i -r debian/control && \
-        rm -rf .git && \
-        debuild --no-lintian -uc -us -b && \
-        debuild --no-lintian -uc -us -S -sa && \
+        debuild --no-lintian -i -uc -us -b && \
+        debuild --no-lintian -i -uc -us -S -sa && \
         lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true

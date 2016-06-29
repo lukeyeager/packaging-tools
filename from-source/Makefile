@@ -1,20 +1,13 @@
-.PHONY : build clean
-
-ifndef GIT_URL
-	$(error GIT_URL unset)
-endif
-ifndef GIT_SRC
-	$(error GIT_SRC unset)
-endif
-ifndef GIT_DEB
-	$(error GIT_DEB unset)
-endif
+.PHONY : none build clean invalidate-cache
 
 LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_ID := "debian-build-from-source"
 
+none:
+	@:
+
 build:
-	echo `date '+%s'` >> .build-log.txt
+	[ -e ".invalidate-cache" ] || touch .invalidate-cache
 	docker build -t $(DOCKER_ID) \
 		--build-arg GIT_URL=$(GIT_URL) \
 		--build-arg GIT_SRC=$(GIT_SRC) \
@@ -25,4 +18,10 @@ build:
 	-docker rm $(DOCKER_ID)
 
 clean:
-	docker images -q $(DOCKER_ID) | xargs docker rmi
+	-docker rm $(DOCKER_ID)
+	docker images -q $(DOCKER_ID) | xargs -r docker rmi
+	-docker images --filter "dangling=true" -q | xargs -r docker rmi
+	rm -f .invalidate-cache
+
+invalidate-cache:
+	echo `date '+%s'` >> .invalidate-cache
