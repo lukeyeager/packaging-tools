@@ -1,4 +1,4 @@
-.PHONY : none build clean invalidate-cache
+.PHONY : none build run clean invalidate-cache
 
 LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_ID := "debian-build-from-source"
@@ -16,6 +16,9 @@ build:
 	docker create --name=$(DOCKER_ID) $(DOCKER_ID)
 	-docker cp $(DOCKER_ID):/install $(LOCAL_DIR)
 	-docker rm $(DOCKER_ID)
+
+run:
+	docker run --rm -it $(DOCKER_ID) bash
 
 clean:
 	-docker rm $(DOCKER_ID)
