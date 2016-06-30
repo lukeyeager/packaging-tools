@@ -26,6 +26,7 @@ clean:
 	docker images -q $(DOCKER_ID) | xargs -r docker rmi
 	-docker images --filter "dangling=true" -q | xargs -r docker rmi
 	rm -f .invalidate-cache
+	rm -rf install/
 
 invalidate-cache:
 	echo `date '+%s'` >> .invalidate-cache
