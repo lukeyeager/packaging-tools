@@ -1,12 +1,14 @@
 FROM ubuntu:14.04
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends --force-yes \
+RUN apt-get -q update
+RUN apt-get -q install -y --no-install-recommends --force-yes \
         build-essential \
+        ca-certificates \
         debhelper \
         devscripts \
         fakeroot \
-        lintian
+        lintian \
+        wget
 
 RUN mkdir /build
 WORKDIR /build
@@ -16,9 +18,10 @@ ARG NEW_VERSION
 ARG DEBEMAIL
 ARG DEBFULLNAME
 
-ADD $OLD_PACKAGE orig.deb
 ADD debian-rules debian-rules
 ADD .invalidate-cache .invalidate-cache
+
+RUN wget -q $OLD_PACKAGE -O orig.deb
 
 # All in one command because we need dynamic envvars
 RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
@@ -67,3 +70,4 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
+
