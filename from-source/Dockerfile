@@ -1,35 +1,36 @@
 FROM ubuntu:14.04
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends --force-yes \
+RUN apt-get update -q
+RUN apt-get install -q -y --no-install-recommends --force-yes \
         build-essential \
         ca-certificates \
         devscripts \
         equivs \
-        git \
-        lintian
+        lintian \
+        wget
 
 RUN mkdir /build
 WORKDIR /build
 
-ARG GIT_URL
-ARG GIT_SRC
-ARG GIT_DEB
+ARG SOURCE_TARBALL
+ARG DEBIAN_TARBALL
+
 ADD .invalidate-cache .invalidate-cache
 
-RUN git clone $GIT_URL package
-RUN cd package && git checkout $GIT_SRC && \
-        git -c user.name="nobody" -c user.email="no@email" merge $GIT_DEB
-RUN echo y | mk-build-deps -i -r package/debian/control
+RUN wget -q $SOURCE_TARBALL -O source.tar && tar xf source.tar
+RUN wget -q $DEBIAN_TARBALL -O debian.tar && tar xf debian.tar --strip 1
+RUN echo y | mk-build-deps -i -r debian/control
 
-# All in one command because we need dynamic envvars
-RUN PKG_NAME=`dpkg-parsechangelog -lpackage/debian/changelog --show-field Source` && \
-        PKG_VERSION=`dpkg-parsechangelog -lpackage/debian/changelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
-        mv package $PKG_NAME && \
-        cd $PKG_NAME && \
-        git archive $GIT_SRC -o ../${PKG_NAME}_${PKG_VERSION}.orig.tar.gz && \
+# All in one command for dynamic envvars
+RUN PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
+        PKG_VERSION=`dpkg-parsechangelog --show-field Version | rev | cut -d'-' -f2- | rev` && \
+        PKG_DIR=`tar tf source.tar | cut -d'/' -f1 | sort | uniq` && \
+        mv source.tar ${PKG_NAME}_${PKG_VERSION}.orig.tar.gz && \
+        cd $PKG_DIR && \
+        mv ../debian . && \
         debuild --no-lintian -i -uc -us -b && \
         debuild --no-lintian -i -uc -us -S -sa && \
         lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
         cp ../* /install/$PKG_NAME/ || true
+

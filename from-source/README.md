@@ -1,5 +1,3 @@
-Build a source package (for PPA upload) from a source tree and a debian tree.
+Build a source package (for PPA upload) from a source tarball and a debian tarball.
 
 Done with Docker for reproducibility.
-
-Expects source code and debian scripts to be checked into the same git repo.

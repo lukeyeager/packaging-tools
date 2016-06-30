@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 
-export GIT_URL=https://github.com/lukeyeager/DIGITS.git
-export GIT_SRC=v3.0.0
-export GIT_DEB=origin/debian/3.0.0
+export SOURCE_TARBALL=https://github.com/lukeyeager/DIGITS/archive/v3.0.0.tar.gz
+export DEBIAN_TARBALL=https://github.com/lukeyeager/DIGITS/archive/debian/3.0.0.tar.gz
 
 make build

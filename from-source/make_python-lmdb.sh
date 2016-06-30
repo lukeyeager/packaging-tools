@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 
-export GIT_URL=https://github.com/lukeyeager/py-lmdb.git
-export GIT_SRC=py-lmdb_0.87
-export GIT_DEB=origin/debian/0.87
+export SOURCE_TARBALL=https://github.com/lukeyeager/py-lmdb/archive/py-lmdb_0.87.tar.gz
+export DEBIAN_TARBALL=https://github.com/lukeyeager/py-lmdb/archive/debian/0.87.tar.gz
 
 make build

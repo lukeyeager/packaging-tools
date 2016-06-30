@@ -1,8 +1,7 @@
 #!/bin/sh
 set -e
 
-export GIT_URL=https://github.com/lukeyeager/Flask-SocketIO.git
-export GIT_SRC=v0.6.0
-export GIT_DEB=origin/debian/0.6.0
+export SOURCE_TARBALL=https://github.com/lukeyeager/Flask-SocketIO/archive/v0.6.0.tar.gz
+export DEBIAN_TARBALL=https://github.com/lukeyeager/Flask-SocketIO/archive/debian/0.6.0.tar.gz
 
 make build
