@@ -1,4 +1,4 @@
-.PHONY : none build run clean invalidate-cache
+.PHONY : none build run clean superclean invalidate-cache
 
 LOCAL_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 DOCKER_ID := "debian-build-from-source"
@@ -22,9 +22,12 @@ run:
 clean:
 	-docker rm $(DOCKER_ID)
 	docker images -q $(DOCKER_ID) | xargs -r docker rmi
-	-docker images --filter "dangling=true" -q | xargs -r docker rmi
 	rm -f .invalidate-cache
 	rm -rf install/
+
+superclean:
+	docker ps -aq -f status=exited | xargs -r docker rm
+	-docker images -q -f dangling=true | xargs -r docker rmi
 
 invalidate-cache:
 	echo `date '+%s'` >> .invalidate-cache
