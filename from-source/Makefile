@@ -11,6 +11,7 @@ build:
 	docker build -t $(DOCKER_ID) \
 		--build-arg SOURCE_TARBALL=$(SOURCE_TARBALL) \
 		--build-arg DEBIAN_TARBALL=$(DEBIAN_TARBALL) \
+		--build-arg PPA_NAME=$(PPA_NAME) \
 		.
 	docker create --name=$(DOCKER_ID) $(DOCKER_ID)
 	-docker cp $(DOCKER_ID):/install $(LOCAL_DIR)
