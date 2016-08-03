@@ -32,5 +32,5 @@ RUN PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
         debuild --no-lintian -i -uc -us -S -sa && \
         lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
-        cp ../* /install/$PKG_NAME/ || true
+        ( cp ../* /install/$PKG_NAME/ || true )
 

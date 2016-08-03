@@ -69,5 +69,5 @@ RUN PKG_NAME=`dpkg-deb -f orig.deb Package` && \
         debuild --no-lintian -uc -us -S -sa && \
         lintian ../*.changes && \
         mkdir -p /install/$PKG_NAME && \
-        cp ../* /install/$PKG_NAME/ || true
+        ( cp ../* /install/$PKG_NAME/ || true )
 
