@@ -18,8 +18,8 @@ ARG PPA_NAME
 
 ADD .invalidate-cache .invalidate-cache
 
-RUN wget -q $SOURCE_TARBALL -O source.tar && tar xf source.tar
-RUN wget -q $DEBIAN_TARBALL -O debian.tar && tar xf debian.tar --strip 1
+RUN wget $SOURCE_TARBALL -O source.tar && tar xf source.tar
+RUN wget $DEBIAN_TARBALL -O debian.tar && tar xf debian.tar --strip 1
 
 RUN [ -z "$PPA_NAME" ] || ( \
         apt-get install -q -y --no-install-recommends --force-yes software-properties-common && \
@@ -27,6 +27,8 @@ RUN [ -z "$PPA_NAME" ] || ( \
         apt-get update -q )
 
 RUN echo y | mk-build-deps -i -r debian/control
+
+ENV DEB_BUILD_OPTIONS nocheck
 
 # All in one command for dynamic envvars
 RUN PKG_NAME=`dpkg-parsechangelog --show-field Source` && \
