@@ -1,14 +1,6 @@
 sudo: required
 dist: trusty
 
-env:
-    - SCRIPT=from-source/make_python-lmdb.sh
-    - SCRIPT=from-source/make_wtforms.sh
-    - SCRIPT=from-source/make_flask-wtf.sh
-    - SCRIPT=from-source/make_flask-socketio.sh
-    - SCRIPT=from-source/make_digits.sh
-    - SCRIPT=from-binary/make_cuda-license-7-5.sh
-
 install:
     # Install newer version of Docker
     - sudo apt-get purge -y --force-yes docker-engine || true
@@ -18,4 +10,4 @@ install:
     - sudo apt-get install -q -y --no-install-recommends --force-yes docker-engine
 
 script:
-    - $SCRIPT
+    for filename in $(ls */make*.sh); do bash $filename || exit 1; done
